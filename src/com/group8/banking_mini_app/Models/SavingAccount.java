@@ -10,7 +10,7 @@ public class SavingAccount extends BankAccount{
     private static String acc_type = "SVA";
 
     public SavingAccount(String account_number, String fullName, LocalDate birthDay, int age, String phoneNumber, String emailAddress, float initBalance){
-        super(fullName, birthDay, age, phoneNumber, emailAddress, initBalance);
+        super(account_number, fullName, birthDay, age, phoneNumber, emailAddress, initBalance);
 
         setAccount_Number(Utilities.generateAccNumber(this));
     }

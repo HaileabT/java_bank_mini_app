@@ -9,7 +9,7 @@ public class CheckingAccount extends BankAccount{
     private static float interestRate = 0.07f;
     private static String acc_type = "CHA";
     public CheckingAccount(String account_Number, String fullName, LocalDate birthDay, int age, String phoneNumber, String emailAddress, float initBalance){
-        super(fullName, birthDay, age, phoneNumber, emailAddress, initBalance);
+        super(account_Number, fullName, birthDay, age, phoneNumber, emailAddress, initBalance);
 
         setAccount_Number(Utilities.generateAccNumber(this));
     }
