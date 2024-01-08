@@ -13,10 +13,6 @@ import java.util.Date;
 
 public class BankApplication {
     public static void main(String[] args) {
-        DatabaseManipulator dbm = new DatabaseManipulator();
-        LocalDate ld = LocalDate.of(2002, 12, 12);
-        BankAccount ba = new SavingAccount("Haileab Tesfaye", ld, 18, "+251903661500", "Haileabtesfaye8@gmail.com", 1002.3f);
-        DatabaseManipulator.addBankAccount(ba);
-        System.out.println(DatabaseManipulator.findAccount("SVA00001"));
+
     }
 }
