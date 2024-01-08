@@ -23,6 +23,26 @@ public class Utilities {
             }
         }
 
+        public static boolean isValidAge(int age){
+        if (age < 0 || age > 180){
+            System.out.println("Enter valid age please!");
+            return false;
+        }
+        else {
+            return true;
+        }
+        }
+
+        public static boolean isValidDate(int day, int month, int year){
+        try {
+            LocalDate.of(year, month, day);
+            return true;
+        }
+        catch (Exception err){
+            err.printStackTrace();
+            return false;
+        }
+        }
 
     public static LocalDate constructDate(int day, int month, int year){
         LocalDate finalDate;
