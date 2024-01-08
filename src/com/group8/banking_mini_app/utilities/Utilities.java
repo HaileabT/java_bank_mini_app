@@ -5,14 +5,25 @@ import com.group8.banking_mini_app.Models.CheckingAccount;
 import com.group8.banking_mini_app.Models.InterestFreeAccount;
 import com.group8.banking_mini_app.Models.SavingAccount;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.Locale;
 import java.util.regex.*;
 
 public class Utilities {
+
+    public static boolean isValidName(String fullName) {
+        String[] name = fullName.split(" ");
+        if (name.length > 2){
+            System.out.println("You entered more than two words");
+            return false;
+        }
+        else {
+//            return input.matches(".*[^a-zA-Z0-9].*");
+            return fullName.matches("^[a-zA-Z ]+$");
+            }
+        }
+
+
     public static LocalDate constructDate(int day, int month, int year){
         LocalDate finalDate;
         finalDate = LocalDate.of(year, month, day);

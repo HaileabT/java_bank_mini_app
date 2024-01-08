@@ -384,7 +384,7 @@ public class DatabaseManipulator {
     public static boolean calculateAndUpdateInterestHandler(){
         try {
             Statement addBankAccount = bank_database.createStatement();
-            ResultSet rs = addBankAccount.executeQuery("update bank_account set account_balance = 0.07 * account_balance + account_balance");
+            ResultSet rs = addBankAccount.executeQuery("update bank_account set account_balance = 0.07 * account_balance + account_balance where not account_number like 'IFA%' ");
             System.out.println("Updated account balances successfully!");
             return true;
         } catch (Exception err){
