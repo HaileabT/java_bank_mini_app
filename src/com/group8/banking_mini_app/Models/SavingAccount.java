@@ -14,7 +14,6 @@ public class SavingAccount extends BankAccount{
 
         setAccount_Number(Utilities.generateAccNumber(this));
     }
-
     public void printAccountDetails(){
         System.out.println("Account Type: Saving Account" );
         System.out.println("Account Number: " + account_Number );
