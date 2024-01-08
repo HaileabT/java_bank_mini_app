@@ -4,6 +4,7 @@ import com.group8.banking_mini_app.Models.BankAccount;
 import com.group8.banking_mini_app.Models.CheckingAccount;
 import com.group8.banking_mini_app.Models.SavingAccount;
 
+import javax.swing.*;
 import java.lang.reflect.Method;
 import java.sql.*;
 import java.time.LocalDate;
@@ -296,13 +297,62 @@ public class DatabaseManipulator {
 
 
 
-//    public static boolean updateInfoHandler(String accNum, String field, String data){
-//
-//    }
-//
-//    public static boolean updateInfoHandler(String accNum, String field, LocalDate date){
-//
-//    }
+    public static boolean updateInfoHandler(String accNum, String field, String value){
+        String old;
+        if (findAccount(accNum)){
+            try {
+                String fieldValue = "get" + field.substring(0, 1).toUpperCase() + field.substring(1).toLowerCase();
+                Method method = returnValue.getClass().getMethod(fieldValue);
+                old = (String) method.invoke(returnValue);
+                Statement addBankAccount = bank_database.createStatement();
+                ResultSet rs = addBankAccount.executeQuery(
+                        "update bank_account set field = " + value +
+                                "where account_number = " + "\"" + returnValue.getAccount_Number() + "\"");
+                String oldString = "" + old;
+                EmailSender.setupEmailServer(returnValue);
+                EmailSender.draftUpdateEmail(returnValue, field, oldString);
+                EmailSender.sendEmail();
+                System.out.println("Operation successful, check your email!");
+                return true;
+            } catch (Exception err) {
+                err.printStackTrace();
+                return false;
+            }
+        }
+        else {
+            System.out.println("Couldn't find account!");
+            return false;
+        }
+    }
+
+    public static boolean updateInfoHandler(String accNum, String field, LocalDate value){
+        String old;
+        if (findAccount(accNum)){
+            try {
+                String fieldValue = "get" + field.substring(0, 1).toUpperCase() + field.substring(1).toLowerCase();
+                Method method = returnValue.getClass().getMethod(fieldValue);
+                LocalDate ld = (LocalDate) method.invoke(returnValue);
+                old = Utilities.getDateString(ld);
+                Statement addBankAccount = bank_database.createStatement();
+                ResultSet rs = addBankAccount.executeQuery(
+                        "update bank_account set field = " + value +
+                                "where account_number = " + "\"" + returnValue.getAccount_Number() + "\"");
+                String oldString = "" + old;
+                EmailSender.setupEmailServer(returnValue);
+                EmailSender.draftUpdateEmail(returnValue, field, oldString);
+                EmailSender.sendEmail();
+                System.out.println("Operation successful, check your email!");
+                return true;
+            } catch (Exception err) {
+                err.printStackTrace();
+                return false;
+            }
+        }
+        else {
+            System.out.println("Couldn't find account!");
+            return false;
+        }
+    }
 
     public static boolean closeAccountHandler(String accNum){
         if (findAccount(accNum)){
@@ -327,6 +377,18 @@ public class DatabaseManipulator {
         }
         else {
             System.out.println("No account with such account number!");
+            return false;
+        }
+    }
+
+    public static boolean calculateAndUpdateInterestHandler(){
+        try {
+            Statement addBankAccount = bank_database.createStatement();
+            ResultSet rs = addBankAccount.executeQuery("update bank_account set account_balance = 0.07 * account_balance + account_balance");
+            System.out.println("Updated account balances successfully!");
+            return true;
+        } catch (Exception err){
+            err.printStackTrace();
             return false;
         }
     }
