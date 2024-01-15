@@ -1,8 +1,10 @@
 package com.group8.banking_mini_app.Controllers;
+import java.time.LocalDate;
 import java.util.Scanner;
 
 import com.group8.banking_mini_app.Models.BankAccount;
 import com.group8.banking_mini_app.utilities.DatabaseManipulator;
+import com.group8.banking_mini_app.utilities.Utilities;
 
 
 public class ManagerController {
@@ -31,11 +33,11 @@ public class ManagerController {
                     break;
                 }
                 case 2: {
-                    this.updateAccountInfo();
+                    this.searchAccount();
                     break;
                 }
                 case 3: {
-                    this.searchAccount();
+                    this.updateAccountInfo();
                     break;
                 }
             }
@@ -44,7 +46,73 @@ public class ManagerController {
 
 
     public void updateAccountInfo() {
+        String accountNumber;
+        int updateChoice;
+        System.out.println("Enter account number you want to update");
+        accountNumber = console.nextLine();
+        System.out.println("1.Update Name");
+        System.out.println("2.Update Date of Birth");
+        System.out.println("3.Update Email");
+        System.out.println("4.Update Phone Number");
+        System.out.println("5.Back");
+        do {
+            try {
+                System.out.print("> ");
+                updateChoice = console.nextInt();
+            } catch (Exception err){
+                System.out.println("Something is wrong with your input please enter numbers between 1 and 5");
+                updateChoice = 0;
+            }
+            if (updateChoice == 5){
+                return;
+            }
+            if (updateChoice > 5 || updateChoice < 1){
+                System.out.println(updateChoice + "is not a valid choice!");
+            }
+        }while(updateChoice > 5 || updateChoice < 1);
 
+        switch(updateChoice){
+            case 1:
+                String fullName;
+                do {
+                    System.out.println("Full Name");
+                    fullName = console.nextLine();
+                } while (!Utilities.isValidName(fullName));
+                fullName = Utilities.formalizeName(fullName);
+                DatabaseManipulator.updateInfoHandler(accountNumber, "full_name", fullName);
+                break;
+            case 2:
+                int birthDay, birthMonth, birthYear;
+                LocalDate ld;
+                do {
+                    System.out.println("Birth Day");
+                    birthDay = console.nextInt();
+                    System.out.println("Birth Month");
+                    birthMonth = console.nextInt();
+                    System.out.println("Birth Year");
+                    birthYear = console.nextInt();
+                    ld = LocalDate.of(birthYear, birthMonth, birthDay);
+                } while (!Utilities.isValidDate(birthYear, birthMonth, birthDay));
+                DatabaseManipulator.updateInfoHandler(accountNumber, "birth_date", ld);
+                break;
+            case 3:
+                String phoneNumber;
+                do {
+                    System.out.println("Phone Number");
+                    System.out.print("+251 ");
+                    phoneNumber = console.nextLine();
+                } while (!Utilities.isValidPhoneNum(phoneNumber));
+                DatabaseManipulator.updateInfoHandler(accountNumber, "phoneNumber", phoneNumber);
+                break;
+            case 4:
+                String emailAddress;
+                do {
+                    System.out.println("Email Address");
+                    emailAddress = console.nextLine();
+                } while (!Utilities.isValidEmail(emailAddress));
+                DatabaseManipulator.updateInfoHandler(accountNumber, "emailAddress", emailAddress);
+                break;
+        }
     }
 
     public void closeAccount() {
@@ -52,7 +120,6 @@ public class ManagerController {
         System.out.println("Enter Account Number You want to close");
         accountNumber = console.nextLine();
         DatabaseManipulator.closeAccountHandler(accountNumber);
-        System.out.println(accountNumber);
     }
 
         public void searchAccount () {

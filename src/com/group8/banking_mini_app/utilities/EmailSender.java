@@ -142,11 +142,9 @@ public class EmailSender {
 
         Transport transport = session.getTransport("smtp");
         transport.connect(emailHost, senderEmail, senderPassword);
-        System.out.println(senderEmail);
         transport.sendMessage(message, message.getAllRecipients());
         transport.close();
         message.setRecipients(Message.RecipientType.TO, "");
-        System.out.println("Email Sent Successfully!");
     }
 
     public static void sendEmail(BankAccount ba) throws MessagingException {
@@ -165,11 +163,9 @@ public class EmailSender {
 
         Transport transport = session.getTransport("smtp");
         transport.connect(emailHost, senderEmail, senderPassword);
-        System.out.println(senderEmail);
         transport.sendMessage(message, new InternetAddress[]{new InternetAddress(ba.getEmailAddress())});
         transport.close();
         message.setRecipients(Message.RecipientType.TO, "");
-        System.out.println("Email Sent Successfully!");
     }
 }
 

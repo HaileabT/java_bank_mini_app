@@ -57,7 +57,7 @@ public class AccountantController {
     }
 
     public void createAccount() {
-        System.out.println("Welcome to Saving Account Spot Enter the following information defined below");
+        System.out.println("Enter the following information defined below");
 
         int choice;
         do{
@@ -74,9 +74,8 @@ public class AccountantController {
         do {
             System.out.println("Full Name");
             fullName = console.nextLine();
-
         } while (!Utilities.isValidName(fullName));
-
+        fullName = Utilities.formalizeName(fullName);
         int birthDay, birthMonth, birthYear;
         LocalDate ld;
 
@@ -90,17 +89,17 @@ public class AccountantController {
             ld = LocalDate.of(birthYear, birthMonth, birthDay);
         } while (!Utilities.isValidDate(birthYear, birthMonth, birthDay));
 
-        int age;
-        do {
-            System.out.println("Age");
-            try {
-                age = console.nextInt();
-            } catch (Exception err){
-                System.out.println("That is an invalid input make sure to enter a number");
-                age = -50;
-            }
-            console.nextLine();
-        } while (!Utilities.isValidAge(age));
+//        int age;
+//        do {
+//            System.out.println("Age");
+//            try {
+//                age = console.nextInt();
+//            } catch (Exception err){
+//                System.out.println("That is an invalid input make sure to enter a number");
+//                age = -50;
+//            }
+//            console.nextLine();
+//        } while (!Utilities.isValidAge(age));
         String phoneNumber;
         do {
             System.out.println("Phone Number");
@@ -127,17 +126,17 @@ public class AccountantController {
 
         switch (choice) {
             case 1: {
-                BankAccount savingBnk = new SavingAccount("Some One", fullName, ld, age, phoneNumber, emailAddress, initBalance, false);
+                BankAccount savingBnk = new SavingAccount("Some One", fullName, ld, phoneNumber, emailAddress, initBalance, false);
                 DatabaseManipulator.addBankAccount(savingBnk);
                 break;
             }
             case 2: {
-                BankAccount checkingBnk = new CheckingAccount("Some One", fullName, ld, age, phoneNumber, emailAddress, initBalance, false);
+                BankAccount checkingBnk = new CheckingAccount("Some One", fullName, ld, phoneNumber, emailAddress, initBalance, false);
                 DatabaseManipulator.addBankAccount(checkingBnk);
                 break;
             }
             case 3: {
-                BankAccount interestFreeBnk = new InterestFreeAccount("Some One", fullName, ld, age, phoneNumber, emailAddress, initBalance, false);
+                BankAccount interestFreeBnk = new InterestFreeAccount("Some One", fullName, ld, phoneNumber, emailAddress, initBalance, false);
                 DatabaseManipulator.addBankAccount(interestFreeBnk);
                 break;
             }
