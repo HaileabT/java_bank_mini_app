@@ -36,8 +36,8 @@ public class Utilities {
         }
 
         public static boolean isValidDate(int year, int month, int day){
-        if (LocalDate.now().getYear() < year){
-            System.out.println("Invalid Date");
+        if (LocalDate.now().getYear() < year || LocalDate.now().getYear() - year > 150){
+            System.out.println("Invalid year, please be careful with what you input!");
             return false;
         }
         try {
@@ -45,7 +45,6 @@ public class Utilities {
             return true;
         }
         catch (Exception err){
-            err.printStackTrace();
             return false;
         }
         }

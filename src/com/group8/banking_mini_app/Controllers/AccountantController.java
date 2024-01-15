@@ -78,28 +78,24 @@ public class AccountantController {
         fullName = Utilities.formalizeName(fullName);
         int birthDay, birthMonth, birthYear;
         LocalDate ld;
-
         do {
-            System.out.println("Birth Day");
-            birthDay = console.nextInt();
-            System.out.println("Birth Month");
-            birthMonth = console.nextInt();
-            System.out.println("Birth Year");
-            birthYear = console.nextInt();
-            ld = LocalDate.of(birthYear, birthMonth, birthDay);
+            try{
+                System.out.println("Birth Day");
+                birthDay = console.nextInt();
+                System.out.println("Birth Month");
+                birthMonth = console.nextInt();
+                System.out.println("Birth Year");
+                birthYear = console.nextInt();
+                ld = LocalDate.of(birthYear, birthMonth, birthDay);
+            } catch (Exception err){
+                System.out.println("Wrong day, month or year double check and re-enter");
+                birthYear = 0;
+                birthDay = 0;
+                birthMonth = 0;
+                ld = null;
+            }
+            console.nextLine();
         } while (!Utilities.isValidDate(birthYear, birthMonth, birthDay));
-
-//        int age;
-//        do {
-//            System.out.println("Age");
-//            try {
-//                age = console.nextInt();
-//            } catch (Exception err){
-//                System.out.println("That is an invalid input make sure to enter a number");
-//                age = -50;
-//            }
-//            console.nextLine();
-//        } while (!Utilities.isValidAge(age));
         String phoneNumber;
         do {
             System.out.println("Phone Number");
