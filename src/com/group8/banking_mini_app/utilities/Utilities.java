@@ -33,7 +33,7 @@ public class Utilities {
         }
         }
 
-        public static boolean isValidDate(int day, int month, int year){
+        public static boolean isValidDate(int year, int month, int day){
         try {
             LocalDate.of(year, month, day);
             return true;
@@ -73,18 +73,18 @@ public class Utilities {
     }
 
     public static boolean isValidPhoneNum(String phoneNum){
-        return validatePattern(phoneNum, "^\\+\\d{12}$");
+        return validatePattern(phoneNum, "^\\d{9}$");
     }
 
-    public static String generateAccNumber(BankAccount ba){
+    public static String generateAccNumber(BankAccount ba, boolean temp){
         if (ba instanceof CheckingAccount){
-        return CheckingAccount.getAcc_type() + "0000" + (DatabaseManipulator.latestAccountNumber("CHA") + 1);
+        return CheckingAccount.getAcc_type() + "0000" + (DatabaseManipulator.latestAccountNumber("CHA") + ((temp)? 0 : 1));
         }
         else if (ba instanceof SavingAccount){
-            return SavingAccount.getAcc_type() + "0000" + (DatabaseManipulator.latestAccountNumber("SVA") + 1);
+            return SavingAccount.getAcc_type() + "0000" + (DatabaseManipulator.latestAccountNumber("SVA") + ((temp)? 0 : 1));
         }
         else if (ba instanceof InterestFreeAccount){
-            return InterestFreeAccount.getAcc_type() + "0000" + (DatabaseManipulator.latestAccountNumber(("IFA")) + 1);
+            return InterestFreeAccount.getAcc_type() + "0000" + (DatabaseManipulator.latestAccountNumber(("IFA")) + ((temp)? 0 : 1));
         }
         else {
             return "None";

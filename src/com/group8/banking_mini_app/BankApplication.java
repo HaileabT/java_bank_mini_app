@@ -10,14 +10,28 @@ import com.group8.banking_mini_app.utilities.DatabaseManipulator;
 import com.group8.banking_mini_app.utilities.EmailSender;
 import com.group8.banking_mini_app.utilities.Utilities;
 
+import javax.xml.crypto.Data;
 import java.time.LocalDate;
 import java.util.Date;
 
 
 public class BankApplication {
+
+    static void updateInterestHandler(){
+        LocalDate date = LocalDate.now();
+        if (date.getDayOfMonth() == 1){
+        DatabaseManipulator.calculateAndUpdateInterestHandler();
+            System.out.println("Interest was add to accounts!");
+        }
+        else{
+            return;
+        }
+    }
     public static void main(String[] args) {
         AccountantController accController=new AccountantController();
         ManagerController mngController=new ManagerController();
+        DatabaseManipulator dbm = new DatabaseManipulator();
+        updateInterestHandler();
         BankApplication bnkApp=new BankApplication();
         Scanner console=new Scanner(System.in);
         int choice;

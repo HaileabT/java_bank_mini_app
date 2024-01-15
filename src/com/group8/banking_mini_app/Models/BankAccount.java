@@ -40,6 +40,7 @@ public abstract class BankAccount {
         this.balance = initBalance;
     }
 
+    public abstract void setAccount_Number(String acc_number);
     public abstract void printAccountDetails();
 
     public abstract float getBalance();
