@@ -141,9 +141,17 @@ public class DatabaseManipulator {
         withdrawer = findAccount(ba, withdrawer);
         if (withdrawer != null){
             try {
+                if (withdrawer instanceof CheckingAccount) {
+                    if (withdrawer.getBalance() - withdraw_amount < CheckingAccount.getOverDraft()) {
+                        System.out.println("Insufficient Funds!");
+                        return false;
+                    }
+                }
+                else {
                 if (withdraw_amount > withdrawer.getBalance() || withdrawer.getBalance() == 0){
                     System.out.println("Insufficient Funds!");
                     return false;
+                }
                 }
                 newBalance = withdrawer.getBalance() - withdraw_amount;
                 withdrawer.setBalance(newBalance);
@@ -176,9 +184,17 @@ public class DatabaseManipulator {
         rcpt = findAccount(recipient, rcpt);
         if (transferee != null && rcpt != null){
             try {
+                if (transferee instanceof CheckingAccount) {
+                    if (transferee.getBalance() - transferAmount < CheckingAccount.getOverDraft()) {
+                        System.out.println("Insufficient Funds!");
+                        return false;
+                    }
+                }
+                else {
                 if (transferAmount > transferee.getBalance() || transferee.getBalance() <= 0){
                     System.out.println("Insufficient Funds!");
                     return false;
+                }
                 }
                 newBalance = transferee.getBalance() - transferAmount;
                 transferee.setBalance(newBalance);
@@ -231,8 +247,8 @@ public class DatabaseManipulator {
         accUpdater = findAccount(accNum, accUpdater);
         if (accUpdater != null){
             try {
-                String fieldValue = "get" + field.substring(0, 1).toUpperCase() + field.substring(1).toLowerCase();
-                String fieldValueSt = "set" + field.substring(0, 1).toUpperCase() + field.substring(1).toLowerCase();
+                String fieldValue = "get" + field.substring(0, 1).toUpperCase() + field.substring(1);
+                String fieldValueSt = "set" + field.substring(0, 1).toUpperCase() + field.substring(1);
                 Method method = accUpdater.getClass().getMethod(fieldValue);
                 Method methods = accUpdater.getClass().getMethod(fieldValueSt, String.class);
                 old = (String) method.invoke(accUpdater);
@@ -264,8 +280,8 @@ public class DatabaseManipulator {
         accUpdater = findAccount(accNum, accUpdater);
         if (accUpdater != null){
             try {
-                String fieldValue = "get" + field.substring(0, 1).toUpperCase() + field.substring(1).toLowerCase();
-                String fieldValueSt = "set" + field.substring(0, 1).toUpperCase() + field.substring(1).toLowerCase();
+                String fieldValue = "get" + field.substring(0, 1).toUpperCase() + field.substring(1);
+                String fieldValueSt = "set" + field.substring(0, 1).toUpperCase() + field.substring(1);
                 Method method = accUpdater.getClass().getMethod(fieldValue);
                 Method methods = accUpdater.getClass().getMethod(fieldValueSt, LocalDate.class);
                 LocalDate ld = (LocalDate) method.invoke(accUpdater);

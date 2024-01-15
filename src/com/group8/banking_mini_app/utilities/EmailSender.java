@@ -8,6 +8,7 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.time.LocalDate;
 import java.util.Properties;
 
 public class EmailSender {
@@ -86,9 +87,15 @@ public class EmailSender {
     }
 
     public static void draftUpdateEmail(BankAccount ba, String updatedField, String oldValue) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, MessagingException {
-        String fieldValue = "get" + updatedField.substring(0, 1).toUpperCase() + updatedField.substring(1).toLowerCase();
+        String fieldValue = "get" + updatedField.substring(0, 1).toUpperCase() + updatedField.substring(1);
         Method method = ba.getClass().getMethod(fieldValue);
-        String newVal = (String) method.invoke(ba);
+        String newVal;
+        if (method.invoke(ba) instanceof LocalDate){
+            newVal = Utilities.getDateString((LocalDate) method.invoke(ba));
+        }
+        else {
+            newVal = (String) method.invoke(ba);
+        }
         updatedAccEmailBuilder(ba, updatedField, oldValue, newVal);
     }
 
