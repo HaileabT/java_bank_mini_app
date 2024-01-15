@@ -9,8 +9,8 @@ public class InterestFreeAccount extends BankAccount{
 
     private static String acc_type = "IFA";
 
-    public InterestFreeAccount(String account_number, String fullName, LocalDate birthDay, int age, String phoneNumber, String emailAddress, float initBalance, boolean isTemp){
-        super(account_number, fullName, birthDay, age, phoneNumber, emailAddress, initBalance);
+    public InterestFreeAccount(String account_number, String fullName, LocalDate birthDay, String phoneNumber, String emailAddress, float initBalance, boolean isTemp){
+        super(account_number, fullName, birthDay, phoneNumber, emailAddress, initBalance);
 
         setAccount_Number(Utilities.generateAccNumber(this, isTemp));
     }

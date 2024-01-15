@@ -11,6 +11,18 @@ import java.util.regex.*;
 
 public class Utilities {
 
+    public static String formalizeName(String name){
+        String temp = "";
+        String[] holder = name.split(" ");
+        for (int i = 0; i< holder.length; i++){
+            holder[i] = holder[i].substring(0, 1).toUpperCase() + holder[i].substring(1).toLowerCase();
+            temp = temp + holder[i] + " ";
+        }
+        temp = temp.trim();
+        name = temp;
+        return name;
+    }
+
     public static boolean isValidName(String fullName) {
         String[] name = fullName.split(" ");
         if (name.length > 2){
@@ -23,17 +35,11 @@ public class Utilities {
             }
         }
 
-        public static boolean isValidAge(int age){
-        if (age < 0 || age > 180){
-            System.out.println("Enter valid age please!");
+        public static boolean isValidDate(int year, int month, int day){
+        if (LocalDate.now().getYear() < year){
+            System.out.println("Invalid Date");
             return false;
         }
-        else {
-            return true;
-        }
-        }
-
-        public static boolean isValidDate(int year, int month, int day){
         try {
             LocalDate.of(year, month, day);
             return true;

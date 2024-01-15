@@ -31,9 +31,9 @@ public abstract class BankAccount {
 
     }
 
-    public BankAccount(String account_number, String fullName, LocalDate birthDay, int age, String phoneNumber, String emailAddress, float initBalance){
+    public BankAccount(String account_number, String fullName, LocalDate birthDay, String phoneNumber, String emailAddress, float initBalance){
         this.full_name = fullName;
-        this.age = age;
+        this.age = LocalDate.now().getYear() - birthDay.getYear();
         this.birth_date = birthDay;
         this.phoneNumber = phoneNumber;
         this.emailAddress = emailAddress;
