@@ -21,10 +21,18 @@ public class ManagerController {
             System.out.println("1.Create Account");
             System.out.println("2.Close Account");
             System.out.println("3.Search Account");
-            System.out.println("4.Back");
+            System.out.println("4.Update Account Information");
+            System.out.println("5.Back");
+            do{
+            try {
             System.out.print(">");
             choice = console.nextInt();
+            } catch (Exception err){
+                System.out.println("Enter valid input please");
+                choice = 0;
+            }
             console.nextLine();
+            }while(choice <= 0);
             switch (choice) {
                 case 1: {
                     this.createAccount();
@@ -39,7 +47,7 @@ public class ManagerController {
                     break;
                 }
             }
-        } while (choice != 4);
+        } while (choice != 5);
     }
 
     public void AccountType() {
@@ -61,12 +69,16 @@ public class ManagerController {
         System.out.println("Welcome to Saving Account Spot Enter the following information defined below");
 
         int choice;
-        do {
-            this.AccountType();
-            choice = console.nextInt();
+        do{
+            try {
+                this.AccountType();
+                choice = console.nextInt();
+            } catch (Exception err){
+                System.out.println("Enter valid input please");
+                choice = 0;
+            }
             console.nextLine();
-        } while (choice >= 4 || choice <= 0);
-
+        }while(choice >= 4 || choice <= 0);
         String fullName;
         do {
             System.out.println("Full Name");
@@ -89,8 +101,13 @@ public class ManagerController {
 
         int age;
         do {
-            System.out.println("age");
+            System.out.println("Age");
+            try {
             age = console.nextInt();
+            } catch (Exception err){
+                System.out.println("That is an invalid input make sure to enter a number");
+                age = -50;
+            }
             console.nextLine();
         } while (!Utilities.isValidAge(age));
         String phoneNumber;
@@ -105,10 +122,17 @@ public class ManagerController {
             emailAddress = console.nextLine();
         } while (!Utilities.isValidEmail(emailAddress));
         float initBalance;
-        do {
-            System.out.println("Starting Balance > 50 Birr");
-            initBalance = console.nextFloat();
-        } while (initBalance < 50);
+        do{
+            try {
+                System.out.println("Starting Balance > 50 Birr");
+                initBalance = console.nextFloat();
+            } catch (Exception err){
+                System.out.println("Enter valid input please");
+                initBalance = 0;
+            }
+            console.nextLine();
+        }while(initBalance < 50);
+
 
         switch (choice) {
             case 1: {
