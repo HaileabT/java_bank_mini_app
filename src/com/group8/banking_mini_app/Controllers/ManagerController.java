@@ -52,8 +52,8 @@ public class ManagerController {
         accountNumber = console.nextLine();
         System.out.println("1.Update Name");
         System.out.println("2.Update Date of Birth");
-        System.out.println("3.Update Email");
-        System.out.println("4.Update Phone Number");
+        System.out.println("3.Update Phone Number");
+        System.out.println("4.Update Email");
         System.out.println("5.Back");
         do {
             try {
@@ -69,6 +69,7 @@ public class ManagerController {
             if (updateChoice > 5 || updateChoice < 1){
                 System.out.println(updateChoice + "is not a valid choice!");
             }
+            console.nextLine();
         }while(updateChoice > 5 || updateChoice < 1);
 
         switch(updateChoice){
