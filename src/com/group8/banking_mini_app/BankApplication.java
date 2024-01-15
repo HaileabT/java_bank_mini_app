@@ -3,16 +3,8 @@ import java.util.Scanner;
 
 import com.group8.banking_mini_app.Controllers.AccountantController;
 import com.group8.banking_mini_app.Controllers.ManagerController;
-import com.group8.banking_mini_app.Models.BankAccount;
-import com.group8.banking_mini_app.Models.CheckingAccount;
-import com.group8.banking_mini_app.Models.SavingAccount;
 import com.group8.banking_mini_app.utilities.DatabaseManipulator;
-import com.group8.banking_mini_app.utilities.EmailSender;
-import com.group8.banking_mini_app.utilities.Utilities;
-
-import javax.xml.crypto.Data;
 import java.time.LocalDate;
-import java.util.Date;
 
 
 public class BankApplication {
@@ -39,7 +31,15 @@ public class BankApplication {
   do{
      bnkApp.rollChoice();
 
-      choice=console.nextInt();
+      do{
+          try {
+              choice = console.nextInt();
+          } catch (Exception err){
+              System.out.println("Enter valid input please");
+              choice = 0;
+          }
+          console.nextLine();
+      }while(choice <= 0);
       switch (choice){
           case 1:{
              mngController.managerChoice();
