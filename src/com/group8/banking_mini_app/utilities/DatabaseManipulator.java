@@ -212,41 +212,6 @@ public class DatabaseManipulator {
         }
     }
 
-    public static boolean updateInfoHandler(String accNum, String field, int value){
-        int old;
-        BankAccount accUpdater = null;
-        accUpdater = findAccount(accNum, accUpdater);
-        if (accUpdater != null){
-            try {
-                String fieldValue = "get" + field.substring(0, 1).toUpperCase() + field.substring(1).toLowerCase();
-                Method method = accUpdater.getClass().getMethod(fieldValue);
-                String fieldValueSt = "set" + field.substring(0, 1).toUpperCase() + field.substring(1).toLowerCase();
-                Method methods = accUpdater.getClass().getMethod(fieldValueSt, Integer.class);
-                old = (int) method.invoke(accUpdater);
-                methods.invoke(accUpdater, value);
-                Statement addBankAccount = bank_database.createStatement();
-                ResultSet rs = addBankAccount.executeQuery(
-                        "update bank_account set " +  field + " = " + value +
-                                " where account_number = " + "\"" + accUpdater.getAccount_Number() + "\"");
-                String oldString = "" + old;
-                EmailSender.setupEmailServer(accUpdater);
-                EmailSender.draftUpdateEmail(accUpdater, field, oldString);
-                EmailSender.sendEmail();
-                System.out.println("Operation successful, check your email!");
-                return true;
-            } catch (Exception err) {
-                err.printStackTrace();
-                return false;
-            }
-        }
-        else {
-            System.out.println("Couldn't find account!");
-            return false;
-        }
-    }
-
-
-
     public static boolean updateInfoHandler(String accNum, String field, String value){
         String sqlField;
         if (field.equals("full_name")){
@@ -307,9 +272,11 @@ public class DatabaseManipulator {
                 old = Utilities.getDateString(ld);
                 methods.invoke(accUpdater, value);
                 Statement addBankAccount = bank_database.createStatement();
-                ResultSet rs = addBankAccount.executeQuery(
+                int rs = addBankAccount.executeUpdate(
                         "update bank_account set " +  field + " = \"" + value +
                                 "\" where account_number = " + "\"" + accUpdater.getAccount_Number() + "\"");
+                addBankAccount.executeUpdate("update bank_account set age = " + (LocalDate.now().getYear() - value.getYear()) +
+                        " where account_number = " + "\"" + accUpdater.getAccount_Number() + "\"");
                 String oldString = "" + old;
                 EmailSender.setupEmailServer(accUpdater);
                 EmailSender.draftUpdateEmail(accUpdater, field, oldString);
