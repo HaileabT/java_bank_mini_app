@@ -89,9 +89,9 @@ public class AccountantController {
                 ld = LocalDate.of(birthYear, birthMonth, birthDay);
             } catch (Exception err){
                 System.out.println("Wrong day, month or year double check and re-enter");
-                birthYear = 0;
                 birthDay = 0;
                 birthMonth = 0;
+                birthYear = LocalDate.now().getYear() - 2;
                 ld = null;
             }
             console.nextLine();
@@ -172,7 +172,7 @@ public class AccountantController {
     {
         String accountNumber;
         Scanner console=new Scanner(System.in);
-        System.out.println("Enter account numbers");
+        System.out.println("Enter account number");
         accountNumber=console.nextLine();
         float amount;
         System.out.println("Enter amount in Birr");
@@ -211,7 +211,7 @@ public class AccountantController {
     public void searchAccount(){
         Scanner console=new Scanner(System.in);
         String accountNumber;
-        System.out.println("Enter Account Number You want to search");
+        System.out.println("Enter account number you want to search");
         accountNumber=console.nextLine();
         BankAccount finder = null;
         finder = DatabaseManipulator.findAccount(accountNumber, finder);

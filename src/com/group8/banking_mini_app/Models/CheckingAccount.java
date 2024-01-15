@@ -7,6 +7,11 @@ import java.util.Date;
 
 public class CheckingAccount extends BankAccount{
     private static float interestRate = 0.07f;
+    private static float overDraft = -5000;
+
+    public static float getOverDraft() {
+        return overDraft;
+    }
     private static String acc_type = "CHA";
     public CheckingAccount(String account_Number, String fullName, LocalDate birthDay, String phoneNumber, String emailAddress, float initBalance, boolean isTemp){
         super(account_Number, fullName, birthDay, phoneNumber, emailAddress, initBalance);

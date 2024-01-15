@@ -100,9 +100,9 @@ public class ManagerController {
                     ld = LocalDate.of(birthYear, birthMonth, birthDay);
                     } catch (Exception err){
                         System.out.println("Wrong day, month or year double check and re-enter");
-                        birthYear = 0;
                         birthDay = 0;
                         birthMonth = 0;
+                        birthYear = LocalDate.now().getYear() - 2;
                         ld = null;
                     }
                     console.nextLine();
@@ -131,14 +131,14 @@ public class ManagerController {
 
     public void closeAccount() {
         String accountNumber;
-        System.out.println("Enter Account Number You want to close");
+        System.out.println("Enter account number you want to close");
         accountNumber = console.nextLine();
         DatabaseManipulator.closeAccountHandler(accountNumber);
     }
 
         public void searchAccount () {
             String accountNumber;
-            System.out.println("Enter Account Number You want to search");
+            System.out.println("Enter account number you want to search");
             accountNumber = console.nextLine();
             BankAccount finder = null;
             finder = DatabaseManipulator.findAccount(accountNumber, finder);
