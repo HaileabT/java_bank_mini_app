@@ -9,10 +9,10 @@ public class SavingAccount extends BankAccount{
     private static float interestRate = 0.07f;
     private static String acc_type = "SVA";
 
-    public SavingAccount(String account_number, String fullName, LocalDate birthDay, int age, String phoneNumber, String emailAddress, float initBalance){
+    public SavingAccount(String account_number, String fullName, LocalDate birthDay, int age, String phoneNumber, String emailAddress, float initBalance, boolean isTemp){
         super(account_number, fullName, birthDay, age, phoneNumber, emailAddress, initBalance);
 
-        setAccount_Number(Utilities.generateAccNumber(this));
+        setAccount_Number(Utilities.generateAccNumber(this, isTemp));
     }
     public void printAccountDetails(){
         System.out.println("Account Type: Saving Account" );

@@ -12,7 +12,7 @@ import java.time.LocalDate;
 public class DatabaseManipulator {
     static BankAccount returnValue = null;
     static BankAccount recipientAcc = null;
-
+    static BankAccount temp = null;
     static Connection bank_database;
     public DatabaseManipulator() {
         try {
@@ -30,7 +30,7 @@ public class DatabaseManipulator {
                 + bankAccount.getFull_name() + "\', "
                 + bankAccount.getAge() + ", \'"
                 + Utilities.getDateString(bankAccount.getBirth_date()) + "\', \'"
-                + bankAccount.getPhoneNumber().substring(4) + "\', \'"
+                + bankAccount.getPhoneNumber() + "\', \'"
                 + bankAccount.getEmailAddress() + "\', "
                 + bankAccount.getBalance() + "); ";
         try {
@@ -48,146 +48,85 @@ public class DatabaseManipulator {
     }
 
 
-    public static boolean findAccount(String account_number){
-        returnValue = null;
-        try {
-        Statement addBankAccount = bank_database.createStatement();
-        ResultSet rs = addBankAccount.executeQuery("select * from bank_account where account_number = "  + "\"" + account_number + "\"");
-        LocalDate ld;
-        String tel;
-        if (rs.next()){
-            int year = rs.getDate("birth_date").getYear();
-            int month = rs.getDate("birth_date").getMonth();
-            int day = rs.getDate("birth_date").getDay();
-            ld = LocalDate.of(year, month, day);
-
-           tel = Utilities.constructPhoneNum(rs.getString("phone_number_251"));
-            if (rs.getString("account_number").contains("CHA")){
-                returnValue = new CheckingAccount(
-                        rs.getString("account_number"),
-                        rs.getString("account_holder"),
-                        ld,
-                        rs.getInt("age"),
-                        tel,
-                        rs.getString("email_address"),
-                        rs.getFloat("account_balance")
-                );
-            }
-            else if (rs.getString("account_number").contains("SVA")){
-                returnValue = new SavingAccount(
-                        rs.getString("account_number"),
-                        rs.getString("account_holder"),
-                        ld,
-                        rs.getInt("age"),
-                        tel,
-                        rs.getString("email_address"),
-                        rs.getFloat("account_balance")
-                );
-            }
-            else {
-                returnValue = new SavingAccount(
-                        rs.getString("account_number"),
-                        rs.getString("account_holder"),
-                        ld,
-                        rs.getInt("age"),
-                        tel,
-                        rs.getString("email_address"),
-                        rs.getFloat("account_balance"));
-            }
-        }
-
-        if (returnValue != null){
-           return true;
-        }
-            System.out.println("Couldn't find the accounts provided!");
-           return false;
-        }
-        catch (Exception err){
-            err.printStackTrace();
-            return  false;
-        }
-    }
-
-    public static boolean findAccount(String account_number, Boolean recipient){
-        if (recipient){
-            recipientAcc = null;
+    public static BankAccount findAccount(String account_number, BankAccount bacc){
+            bacc = null;
             try {
                 Statement addBankAccount = bank_database.createStatement();
                 ResultSet rs = addBankAccount.executeQuery("select * from bank_account where account_number = "  + "\"" + account_number + "\"");
                 LocalDate ld;
                 String tel;
                 if (rs.next()){
-                    int year = rs.getDate("birth_date").getYear();
-                    int month = rs.getDate("birth_date").getMonth();
-                    int day = rs.getDate("birth_date").getDay();
-                    ld = LocalDate.of(year, month, day);
+                    java.sql.Date bd = rs.getDate("birth_date");
+                    ld = bd.toLocalDate();
 
                     tel = Utilities.constructPhoneNum(rs.getString("phone_number_251"));
                     if (rs.getString("account_number").contains("CHA")){
-                        recipientAcc = new CheckingAccount(
+                        bacc = new CheckingAccount(
                                 rs.getString("account_number"),
                                 rs.getString("account_holder"),
                                 ld,
                                 rs.getInt("age"),
                                 tel,
                                 rs.getString("email_address"),
-                                rs.getFloat("account_balance")
+                                rs.getFloat("account_balance"), true
                         );
                     }
                     else if (rs.getString("account_number").contains("SVA")){
-                        recipientAcc = new SavingAccount(
+                        bacc = new SavingAccount(
                                 rs.getString("account_number"),
                                 rs.getString("account_holder"),
                                 ld,
                                 rs.getInt("age"),
                                 tel,
                                 rs.getString("email_address"),
-                                rs.getFloat("account_balance")
+                                rs.getFloat("account_balance"), true
                         );
                     }
                     else {
-                        recipientAcc = new SavingAccount(
+                        bacc = new SavingAccount(
                                 rs.getString("account_number"),
                                 rs.getString("account_holder"),
                                 ld,
                                 rs.getInt("age"),
                                 tel,
                                 rs.getString("email_address"),
-                                rs.getFloat("account_balance"));
+                                rs.getFloat("account_balance"), true
+                        );
                     }
                 }
 
-                if (recipientAcc != null){
-                    recipientAcc.printAccountDetails();
-                    return true;
+
+                if (bacc != null){
+                    bacc.setAccount_Number(rs.getString("account_number"));
+                    return bacc;
                 }
                 System.out.println("Couldn't find the account provided!");
-                return false;
+                return null;
             }
             catch (Exception err){
                 err.printStackTrace();
-                return  false;
+                return null;
             }
-        }
-        else{
-            return false;
-        }
 
     }
 
-    public static boolean depositHandler(String ba, float deposit_amount){
+    public static boolean depositHandler(String ba, float deposit_amount, boolean sendEmail){
         float newBalance;
-        if (findAccount(ba)){
+        BankAccount depositor = null;
+        depositor = findAccount(ba, depositor);
+        if (depositor != null){
             try {
-                newBalance = deposit_amount + returnValue.getBalance();
-                returnValue.setBalance(newBalance);
+                newBalance = deposit_amount + depositor.getBalance();
+                depositor.setBalance(newBalance);
             Statement addBankAccount = bank_database.createStatement();
-            ResultSet rs = addBankAccount.executeQuery(
-                    "update bank_account set balance = " + newBalance +
+            int rs = addBankAccount.executeUpdate(
+                    "update bank_account set account_balance = " + newBalance +
                             "where account_number = " + "\"" + ba + "\"");
-            EmailSender.setupEmailServer(returnValue);
-            EmailSender.draftEmailDeposit(returnValue, deposit_amount);
+            if (sendEmail){
+            EmailSender.setupEmailServer(depositor);
+            EmailSender.draftEmailDeposit(depositor, deposit_amount);
             EmailSender.sendEmail();
+            }
             return true;
             } catch (Exception err){
                 err.printStackTrace();
@@ -200,23 +139,27 @@ public class DatabaseManipulator {
         }
     }
 
-    public static boolean withdrawHandler(String ba, float withdraw_amount){
+    public static boolean withdrawHandler(String ba, float withdraw_amount, boolean sendEmail){
         float newBalance;
-        if (findAccount(ba)){
+        BankAccount withdrawer = null;
+        withdrawer = findAccount(ba, withdrawer);
+        if (withdrawer != null){
             try {
-                if (withdraw_amount > returnValue.getBalance() || returnValue.getBalance() == 0){
+                if (withdraw_amount > withdrawer.getBalance() || withdrawer.getBalance() == 0){
                     System.out.println("Insufficient Funds!");
                     return false;
                 }
-                newBalance = withdraw_amount - returnValue.getBalance();
-                returnValue.setBalance(newBalance);
+                newBalance = withdrawer.getBalance() - withdraw_amount;
+                withdrawer.setBalance(newBalance);
                 Statement addBankAccount = bank_database.createStatement();
-                ResultSet rs = addBankAccount.executeQuery(
-                        "update bank_account set balance = " + newBalance +
+                int rs = addBankAccount.executeUpdate(
+                        "update bank_account set account_balance = " + newBalance +
                                 "where account_number = " + "\"" + ba + "\"");
-                EmailSender.setupEmailServer(returnValue);
-                EmailSender.draftEmailDeposit(returnValue, withdraw_amount);
+                if (sendEmail){
+                EmailSender.setupEmailServer(withdrawer);
+                EmailSender.draftEmailWithdrawn(withdrawer, withdraw_amount);
                 EmailSender.sendEmail();
+                }
                 return true;
             } catch (Exception err){
                 err.printStackTrace();
@@ -231,30 +174,36 @@ public class DatabaseManipulator {
     public static boolean transferHandler(String sender, String recipient, float transferAmount){
         float newBalance;
         float newBalRec;
-        if (findAccount(sender) && findAccount(recipient, true)){
+        BankAccount transferee = null;
+        transferee = findAccount(sender, transferee);
+        BankAccount rcpt = null;
+        rcpt = findAccount(recipient, rcpt);
+        if (transferee != null && rcpt != null){
             try {
-                if (transferAmount > returnValue.getBalance() || returnValue.getBalance() <= 0){
+                if (transferAmount > transferee.getBalance() || transferee.getBalance() <= 0){
                     System.out.println("Insufficient Funds!");
                     return false;
                 }
-                newBalance = transferAmount - returnValue.getBalance();
-                returnValue.setBalance(newBalance);
-                newBalRec = transferAmount + recipientAcc.getBalance();
-                recipientAcc.setBalance(newBalRec);
-                withdrawHandler(sender, transferAmount);
-                depositHandler(recipient, transferAmount);
-                EmailSender.setupEmailServer(returnValue);
-                EmailSender.draftEmailTransferS(returnValue, recipientAcc, transferAmount);
+                newBalance = transferee.getBalance() - transferAmount;
+                transferee.setBalance(newBalance);
+                newBalRec = transferAmount + rcpt.getBalance();
+                rcpt.setBalance(newBalRec);
+                withdrawHandler(sender, transferAmount, false);
+                depositHandler(recipient, transferAmount,false);
+                EmailSender.setupEmailServer(transferee);
+                EmailSender.draftEmailTransferS(transferee, rcpt, transferAmount);
                 EmailSender.sendEmail();
-                EmailSender.setupEmailServer(returnValue);
-                EmailSender.draftEmailTransferR(returnValue, recipientAcc, transferAmount);
+                EmailSender.setupEmailServer(rcpt);
+                EmailSender.draftEmailTransferR(transferee, rcpt, transferAmount);
                 EmailSender.sendEmail();
+                System.out.println("");
                 System.out.println("The transfer was successful!");
                 System.out.println("Sender: ");
-                returnValue.printAccountDetails();
+                transferee.printAccountDetails();
                 System.out.println("\n");
                 System.out.println("Receiver: ");
-                recipientAcc.printAccountDetails();
+                rcpt.printAccountDetails();
+                System.out.println("\n\n");
                 return true;
             } catch (Exception err){
                 err.printStackTrace();
@@ -269,18 +218,20 @@ public class DatabaseManipulator {
 
     public static boolean updateInfoHandler(String accNum, String field, int value){
         int old;
-        if (findAccount(accNum)){
+        BankAccount accUpdater = null;
+        accUpdater = findAccount(accNum, accUpdater);
+        if (accUpdater != null){
             try {
                 String fieldValue = "get" + field.substring(0, 1).toUpperCase() + field.substring(1).toLowerCase();
-                Method method = returnValue.getClass().getMethod(fieldValue);
-                old = (int) method.invoke(returnValue);
+                Method method = accUpdater.getClass().getMethod(fieldValue);
+                old = (int) method.invoke(accUpdater);
                 Statement addBankAccount = bank_database.createStatement();
                 ResultSet rs = addBankAccount.executeQuery(
                         "update bank_account set field = " + value +
-                                "where account_number = " + "\"" + returnValue.getAccount_Number() + "\"");
+                                "where account_number = " + "\"" + accUpdater.getAccount_Number() + "\"");
                 String oldString = "" + old;
-                EmailSender.setupEmailServer(returnValue);
-                EmailSender.draftUpdateEmail(returnValue, field, oldString);
+                EmailSender.setupEmailServer(accUpdater);
+                EmailSender.draftUpdateEmail(accUpdater, field, oldString);
                 EmailSender.sendEmail();
                 System.out.println("Operation successful, check your email!");
                 return true;
@@ -299,18 +250,20 @@ public class DatabaseManipulator {
 
     public static boolean updateInfoHandler(String accNum, String field, String value){
         String old;
-        if (findAccount(accNum)){
+        BankAccount accUpdater = null;
+        accUpdater = findAccount(accNum, accUpdater);
+        if (accUpdater != null){
             try {
                 String fieldValue = "get" + field.substring(0, 1).toUpperCase() + field.substring(1).toLowerCase();
-                Method method = returnValue.getClass().getMethod(fieldValue);
-                old = (String) method.invoke(returnValue);
+                Method method = accUpdater.getClass().getMethod(fieldValue);
+                old = (String) method.invoke(accUpdater);
                 Statement addBankAccount = bank_database.createStatement();
-                ResultSet rs = addBankAccount.executeQuery(
+                int rs = addBankAccount.executeUpdate(
                         "update bank_account set field = " + value +
-                                "where account_number = " + "\"" + returnValue.getAccount_Number() + "\"");
+                                "where account_number = " + "\"" + accUpdater.getAccount_Number() + "\"");
                 String oldString = "" + old;
-                EmailSender.setupEmailServer(returnValue);
-                EmailSender.draftUpdateEmail(returnValue, field, oldString);
+                EmailSender.setupEmailServer(accUpdater);
+                EmailSender.draftUpdateEmail(accUpdater, field, oldString);
                 EmailSender.sendEmail();
                 System.out.println("Operation successful, check your email!");
                 return true;
@@ -327,19 +280,21 @@ public class DatabaseManipulator {
 
     public static boolean updateInfoHandler(String accNum, String field, LocalDate value){
         String old;
-        if (findAccount(accNum)){
+        BankAccount accUpdater = null;
+        accUpdater = findAccount(accNum, accUpdater);
+        if (accUpdater != null){
             try {
                 String fieldValue = "get" + field.substring(0, 1).toUpperCase() + field.substring(1).toLowerCase();
-                Method method = returnValue.getClass().getMethod(fieldValue);
-                LocalDate ld = (LocalDate) method.invoke(returnValue);
+                Method method = accUpdater.getClass().getMethod(fieldValue);
+                LocalDate ld = (LocalDate) method.invoke(accUpdater);
                 old = Utilities.getDateString(ld);
                 Statement addBankAccount = bank_database.createStatement();
                 ResultSet rs = addBankAccount.executeQuery(
                         "update bank_account set field = " + value +
-                                "where account_number = " + "\"" + returnValue.getAccount_Number() + "\"");
+                                "where account_number = " + "\"" + accUpdater.getAccount_Number() + "\"");
                 String oldString = "" + old;
-                EmailSender.setupEmailServer(returnValue);
-                EmailSender.draftUpdateEmail(returnValue, field, oldString);
+                EmailSender.setupEmailServer(accUpdater);
+                EmailSender.draftUpdateEmail(accUpdater, field, oldString);
                 EmailSender.sendEmail();
                 System.out.println("Operation successful, check your email!");
                 return true;
@@ -355,19 +310,21 @@ public class DatabaseManipulator {
     }
 
     public static boolean closeAccountHandler(String accNum){
-        if (findAccount(accNum)){
+        BankAccount accUpdater = null;
+        accUpdater = findAccount(accNum, accUpdater);
+        if (accUpdater != null){
             try {
-                if (returnValue.getBalance() <= 20.0f){
+                if (accUpdater.getBalance() >= 20.0f){
                     System.out.println("The account still has some balance withdraw first!");
                     return false;
                 }
                 Statement addBankAccount = bank_database.createStatement();
-                ResultSet rs = addBankAccount.executeQuery(
+                int rs = addBankAccount.executeUpdate(
                         "delete from bank_account " +
                                 "where account_number = " + "\"" + accNum + "\"");
 
-                EmailSender.setupEmailServer(returnValue);
-                EmailSender.draftCloseAccountEmail(returnValue);
+                EmailSender.setupEmailServer(accUpdater);
+                EmailSender.draftCloseAccountEmail(accUpdater);
                 EmailSender.sendEmail();
                 return true;
             } catch (Exception err){
@@ -384,7 +341,7 @@ public class DatabaseManipulator {
     public static boolean calculateAndUpdateInterestHandler(){
         try {
             Statement addBankAccount = bank_database.createStatement();
-            ResultSet rs = addBankAccount.executeQuery("update bank_account set account_balance = 0.07 * account_balance + account_balance where not account_number like 'IFA%' ");
+            int rs = addBankAccount.executeUpdate("update bank_account set account_balance = 0.07 * account_balance + account_balance where not account_number like 'IFA%' ");
             System.out.println("Updated account balances successfully!");
             return true;
         } catch (Exception err){

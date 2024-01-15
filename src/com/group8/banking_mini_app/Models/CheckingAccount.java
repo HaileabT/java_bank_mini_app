@@ -8,10 +8,10 @@ import java.util.Date;
 public class CheckingAccount extends BankAccount{
     private static float interestRate = 0.07f;
     private static String acc_type = "CHA";
-    public CheckingAccount(String account_Number, String fullName, LocalDate birthDay, int age, String phoneNumber, String emailAddress, float initBalance){
+    public CheckingAccount(String account_Number, String fullName, LocalDate birthDay, int age, String phoneNumber, String emailAddress, float initBalance, boolean isTemp){
         super(account_Number, fullName, birthDay, age, phoneNumber, emailAddress, initBalance);
 
-        setAccount_Number(Utilities.generateAccNumber(this));
+        setAccount_Number(Utilities.generateAccNumber(this, isTemp));
     }
 
     public void printAccountDetails(){

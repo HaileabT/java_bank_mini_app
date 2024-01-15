@@ -1,5 +1,6 @@
 package com.group8.banking_mini_app.Controllers;
 
+import com.group8.banking_mini_app.Models.BankAccount;
 import com.group8.banking_mini_app.utilities.DatabaseManipulator;
 
 import javax.xml.crypto.Data;
@@ -46,7 +47,7 @@ public class AccountantController {
         int amount;
         System.out.println("Enter amount in Birr");
         amount=console.nextInt();
-        DatabaseManipulator.depositHandler(accountNumber,amount);
+        DatabaseManipulator.depositHandler(accountNumber,amount, true);
     }
     public void withdraw()
     {
@@ -54,10 +55,11 @@ public class AccountantController {
         Scanner console=new Scanner(System.in);
         System.out.println("Enter account numbers");
         accountNumber=console.nextLine();
-        int amount;
+        float amount;
         System.out.println("Enter amount in Birr");
-        amount=console.nextInt();
-        DatabaseManipulator.withdrawHandler(accountNumber,amount);
+        amount=console.nextFloat();
+        console.nextLine();
+        DatabaseManipulator.withdrawHandler(accountNumber,amount, true);
     }
     public void transfer()
     {
@@ -68,8 +70,17 @@ public class AccountantController {
         System.out.println("Enter receiver account number");
         receiverAccountNumber=console.nextLine();
         int amount;
+        while(true){
+            try{
         System.out.println("Enter amount in Birr");
         amount=console.nextInt();
+        break;
+            } catch(Exception err){
+                console.nextLine();
+                System.out.println("Something is wrong with your Input try again!");
+            }
+
+        }
         DatabaseManipulator.transferHandler(senderAccountNumber,receiverAccountNumber,amount);
     }
 
@@ -78,6 +89,10 @@ public class AccountantController {
         String accountNumber;
         System.out.println("Enter Account Number You want to search");
         accountNumber=console.nextLine();
-        DatabaseManipulator.findAccount(accountNumber);
+        BankAccount finder = null;
+        finder = DatabaseManipulator.findAccount(accountNumber, finder);
+        if (finder != null){
+            finder.printAccountDetails();
+        }
     }
 }
