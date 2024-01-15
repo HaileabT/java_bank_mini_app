@@ -2,6 +2,7 @@ package com.group8.banking_mini_app.Controllers;
 import java.time.LocalDate;
 import java.util.Scanner;
 
+import com.group8.banking_mini_app.BankApplication;
 import com.group8.banking_mini_app.Models.BankAccount;
 import com.group8.banking_mini_app.utilities.DatabaseManipulator;
 import com.group8.banking_mini_app.utilities.Utilities;
@@ -47,9 +48,12 @@ public class ManagerController {
 
     public void updateAccountInfo() {
         String accountNumber;
+        BankAccount finder = null;
         int updateChoice;
+        do {
         System.out.println("Enter account number you want to update");
         accountNumber = console.nextLine();
+        } while (DatabaseManipulator.findAccount(accountNumber, finder) == null);
         System.out.println("1.Update Name");
         System.out.println("2.Update Date of Birth");
         System.out.println("3.Update Phone Number");
@@ -86,6 +90,7 @@ public class ManagerController {
                 int birthDay, birthMonth, birthYear;
                 LocalDate ld;
                 do {
+                    try{
                     System.out.println("Birth Day");
                     birthDay = console.nextInt();
                     System.out.println("Birth Month");
@@ -93,6 +98,14 @@ public class ManagerController {
                     System.out.println("Birth Year");
                     birthYear = console.nextInt();
                     ld = LocalDate.of(birthYear, birthMonth, birthDay);
+                    } catch (Exception err){
+                        System.out.println("Wrong day, month or year double check and re-enter");
+                        birthYear = 0;
+                        birthDay = 0;
+                        birthMonth = 0;
+                        ld = null;
+                    }
+                    console.nextLine();
                 } while (!Utilities.isValidDate(birthYear, birthMonth, birthDay));
                 DatabaseManipulator.updateInfoHandler(accountNumber, "birth_date", ld);
                 break;
