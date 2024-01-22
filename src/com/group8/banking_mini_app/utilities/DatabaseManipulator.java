@@ -16,9 +16,10 @@ public class DatabaseManipulator {
     public DatabaseManipulator() {
         try {
             bank_database = DriverManager.getConnection("jdbc:mysql://localhost:3306/banking_system", "root", "Haile@mysql11");
-            System.out.println("Connected");
+            System.out.println("Database connected!");
         }
         catch(Exception err){
+            System.out.println("Something went wrong while trying to connect to database!");
             err.printStackTrace();
         }
     }
@@ -143,7 +144,7 @@ public class DatabaseManipulator {
             try {
                 if (withdrawer instanceof CheckingAccount) {
                     if (withdrawer.getBalance() - withdraw_amount < CheckingAccount.getOverDraft()) {
-                        System.out.println("Insufficient Funds!");
+                        System.out.println("Overdraft limit reached!");
                         return false;
                     }
                 }
@@ -186,7 +187,7 @@ public class DatabaseManipulator {
             try {
                 if (transferee instanceof CheckingAccount) {
                     if (transferee.getBalance() - transferAmount < CheckingAccount.getOverDraft()) {
-                        System.out.println("Insufficient Funds!");
+                        System.out.println("Overdraft limit reached!");
                         return false;
                     }
                 }

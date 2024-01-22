@@ -55,6 +55,8 @@ public class BankApplication {
 
     }
     public void rollChoice(){
+        System.out.println("Bank of Tomorrow");
+        System.out.println("--------------------");
         System.out.println("1.Manager");
         System.out.println("2.Accountant");
         System.out.println("3.Exit");

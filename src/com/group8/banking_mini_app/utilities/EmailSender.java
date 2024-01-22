@@ -153,26 +153,5 @@ public class EmailSender {
         transport.close();
         message.setRecipients(Message.RecipientType.TO, "");
     }
-
-    public static void sendEmail(BankAccount ba) throws MessagingException {
-        session = null;
-        String senderEmail = "Haileabtesfaye11@gmail.com";
-        String senderPassword = "jbgx pqvl apzv eyfn";
-        String emailHost = "smtp.gmail.com";
-        message.setFrom(senderEmail);
-
-        session = Session.getInstance(properties, new javax.mail.Authenticator() {
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(
-                        "Haileabtesfaye11@gmail.com", "jbgx pqvl apzv eyfn");
-            }
-        });
-
-        Transport transport = session.getTransport("smtp");
-        transport.connect(emailHost, senderEmail, senderPassword);
-        transport.sendMessage(message, new InternetAddress[]{new InternetAddress(ba.getEmailAddress())});
-        transport.close();
-        message.setRecipients(Message.RecipientType.TO, "");
-    }
 }
 
